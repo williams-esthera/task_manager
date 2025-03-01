@@ -42,15 +42,28 @@ class _MyHomePageState extends State<MyHomePage> {
   final _textController = TextEditingController();
   bool? isChecked = false;
   String userTask = '';
-  List taskList = ["Task1", "Task2", "Task3"];
+  List taskList = [];
 
   void addTask(String text) {
-    //code for adding new task
+    setState((){
+      if (_textController.text.isNotEmpty){
+      taskList.add(text);
+      _textController.clear();
+      }
+    });
   }
 
-  void deleteTask() {}
+  void deleteTask() {
+    setState((){
 
-  void checkTask() {}
+    });
+  }
+
+  void checkTask() {
+    setState((){
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
