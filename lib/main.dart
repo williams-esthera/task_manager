@@ -12,11 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My Calc App',
+      title: 'My Task Manager',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'My Calc App'),
+      home: const MyHomePage(title: 'My Task Manager'),
     );
   }
 }
@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //setting colorscheme
   Color background = Color(0xFFD4E6B5);
   Color background2 = Color(0xFFE2D686);
   Color accent1 = Color(0xFFAFC97E);
@@ -40,30 +41,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //keeps track of what the user types
   final _textController = TextEditingController();
-  String userTask = '';
+  //this list is full of booleans for each task, marking whether the task is completed or not
   List taskChecked = [];
+
+  //keeps track of styling for text based on whether the checkbox has been checked or not
+  List taskCrossOut = [];
+
+  //this list is for tasks, every new task is added to the list
   List taskList = [];
 
+  //add function, adds task that are in textfield
   void addTask(String text) {
-    setState((){
-      if (_textController.text.isNotEmpty){
-      taskList.add(text);
-      taskChecked.add(false);
-      _textController.clear();
+    setState(() {
+      //if the text field is empty, no task can be created
+      if (_textController.text.isNotEmpty) {
+        taskList.add(text);
+        taskChecked.add(false);
+        taskCrossOut.add(TextDecoration.none);
+        _textController.clear();
       }
     });
   }
 
+  //deletes tasks once delete button is selected
   void deleteTask(int index) {
-    setState((){
+    setState(() {
       taskList.removeAt(index);
       taskChecked.removeAt(index);
-    });
-  }
-
-  void checkTask() {
-    setState((){
-
     });
   }
 
@@ -75,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         titleTextStyle: TextStyle(
           // Your custom font
-          fontSize: 50,
+          fontSize: 40,
           fontWeight: FontWeight.bold,
           color: text,
         ),
@@ -93,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 hintText: 'Enter New Task',
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
+                  //when you press X, the text is cleared for the task
                   onPressed: () {
                     _textController.clear();
                   },
@@ -119,25 +124,36 @@ class _MyHomePageState extends State<MyHomePage> {
             //ListView
             Expanded(
               child: ListView.separated(
+                //every time a new task is added to list, a new list item is created with the following criteria
                 itemCount: taskList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    title: Text(taskList[index]),
+                    //task name
+                    title: Text(
+                      taskList[index],
+                      //here is where text is crossed out
+                      style: TextStyle(decoration: taskCrossOut[index]),
+                    ),
                     tileColor: accent2,
                     onTap: () {
-                      setState((){
+                      setState(() {
+                        //when you tap task, checkbox is changed
                         taskChecked[index] = !taskChecked[index];
+                        crossOut(index);
                       });
                     },
+                    //creates checkbox
                     leading: Checkbox(
                       value: taskChecked[index],
                       activeColor: accent1,
                       onChanged: (checked) {
                         setState(() {
                           taskChecked[index] = checked;
+                          crossOut(index);
                         });
                       },
                     ),
+                    //creates delete button
                     trailing: IconButton(
                       onPressed: () {
                         deleteTask(index);
@@ -146,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
+                //seperator between each task
                 separatorBuilder:
                     (BuildContext context, int index) =>
                         const SizedBox(height: 10),
@@ -155,5 +172,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  //This method crosses out task if the checkbox is selected
+  void crossOut(int index) {
+    if (!taskChecked[index]) {
+      taskCrossOut[index] = TextDecoration.none;
+    } else {
+      taskCrossOut[index] = TextDecoration.lineThrough;
+    }
   }
 }
