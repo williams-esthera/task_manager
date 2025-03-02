@@ -40,22 +40,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //keeps track of what the user types
   final _textController = TextEditingController();
-  bool? isChecked = false;
   String userTask = '';
+  List taskChecked = [];
   List taskList = [];
 
   void addTask(String text) {
     setState((){
       if (_textController.text.isNotEmpty){
       taskList.add(text);
+      taskChecked.add(false);
       _textController.clear();
       }
     });
   }
 
-  void deleteTask() {
+  void deleteTask(int index) {
     setState((){
-
+      taskList.removeAt(index);
+      taskChecked.removeAt(index);
     });
   }
 
@@ -119,24 +121,26 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView.separated(
                 itemCount: taskList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  bool? taskChecked = false;
                   return ListTile(
                     title: Text(taskList[index]),
                     tileColor: accent2,
-                    onTap: () {},
+                    onTap: () {
+                      setState((){
+                        taskChecked[index] = !taskChecked[index];
+                      });
+                    },
                     leading: Checkbox(
-                      value: taskChecked,
-                      activeColor: accent2,
-                      tristate: true,
+                      value: taskChecked[index],
+                      activeColor: accent1,
                       onChanged: (checked) {
                         setState(() {
-                          taskChecked = checked;
+                          taskChecked[index] = checked;
                         });
                       },
                     ),
                     trailing: IconButton(
                       onPressed: () {
-                        deleteTask();
+                        deleteTask(index);
                       },
                       icon: Icon(Icons.delete),
                     ),
