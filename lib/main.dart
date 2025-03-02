@@ -67,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       taskList.removeAt(index);
       taskChecked.removeAt(index);
+      taskCrossOut.removeAt(index);
     });
   }
 
